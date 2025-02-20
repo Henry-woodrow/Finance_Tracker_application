@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\AuthController;
 Route::get('/', function () {
     return view('welcome');
 });
@@ -18,3 +18,11 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+Route::get('/Login', function () {
+    return view('Login');
+});
+
+Route::controller(AuthController::class)->group(function () {
+    Route::get('register', 'register')->name('register')
+});
