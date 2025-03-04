@@ -1,3 +1,4 @@
+<!-- filepath: /d:/repostories/Finance_Tracker_application/Finance_Tracker/resources/views/layouts/navigation.blade.php -->
 <nav class="bg-gray-800 text-white p-4 fixed top-0 left-0 w-full z-50" x-data="{ open: false }">
     <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
         <div class="relative flex h-16 items-center justify-between">
@@ -22,18 +23,22 @@
 
             <!-- Logo & Desktop Menu -->
             <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-                <div class="flex shrink-0 items-center ">
+                <div class="flex shrink-0 items-center">
                     <h1 class="text-white font-bold">Finance Tracker</h1>
                 </div>
-                <div class="hidden sm:ml-6 sm:block">
-                    <div class="flex space-x-4 text-right">
-                        <a href="#" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Login</a>
-                        <a href="#" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Register</a>
+                <div class="hidden sm:ml-6 sm:flex sm:items-center sm:justify-end flex-1">
+                    <div class="flex space-x-4">
+                        @guest
+                            <a href="{{ route('login') }}" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Login</a>
+                            <a href="{{ route('register') }}" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Register</a>
+                        @else
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Logout</button>
+                            </form>
+                        @endguest
                     </div>
                 </div>
-            </div>
-
-
             </div>
         </div>
     </div>
@@ -41,10 +46,16 @@
     <!-- Mobile Menu -->
     <div x-show="open" x-transition class="sm:hidden">
         <div class="space-y-1 px-2 pt-2 pb-3">
-            <a href="#" class="block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white">about</a>
-            <a href="#" class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Login</a>
-            <a href="#" class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Register</a>
-
+            <a href="#" class="block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white">About</a>
+            @guest
+                <a href="{{ route('login') }}" class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Login</a>
+                <a href="{{ route('register') }}" class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Register</a>
+            @else
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="block w-full text-left rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Logout</button>
+                </form>
+            @endguest
         </div>
     </div>
 </nav>
