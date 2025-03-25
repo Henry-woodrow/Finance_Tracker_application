@@ -18,14 +18,17 @@
         <div class="flex justify-center mb-12">
             <div class="bg-gradient-to-r from-indigo-600 to-blue-500 text-white p-16 rounded-2xl shadow-2xl text-center">
                 <h1 class="text-8xl font-extrabold">
-                    {{ $number ?? 0 }}
+                    {{ $number ?? 55 }}
                 </h1>
                 <p class="text-xl mt-2 font-light">Current Balance</p>
             </div>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 justify-center">
-            <button class="bg-blue-600 hover:bg-blue-800 text-white font-semibold py-4 px-8 rounded-xl shadow-lg transition transform hover:scale-110">
+            <button
+                onclick="window.location='{{ route('salary_form') }}'"
+                class="bg-blue-600 hover:bg-blue-800 text-white font-semibold py-4 px-8 rounded-xl shadow-lg transition transform hover:scale-110">
+
                 Add Salary
             </button>
             <button class="bg-blue-600 hover:bg-blue-800 text-white font-semibold py-4 px-8 rounded-xl shadow-lg transition transform hover:scale-110">

@@ -10,8 +10,8 @@ class Finance extends Model
     use HasFactory;
 
     // Define the table if it's not the plural of the model name
-    protected $table = 'finances';
+    protected $table = 'salary';
 
     // Define any fillable fields
-    protected $fillable = ['amount'];
+    protected $fillable = ['Pretax amount'];
 }

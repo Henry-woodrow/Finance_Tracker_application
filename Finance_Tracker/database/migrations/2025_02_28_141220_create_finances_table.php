@@ -11,18 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('finances', function (Blueprint $table) {
-            $table->id();
-            $table->decimal('amount', 15, 2)->default(0); // Add the amount column with a default value of 0
+        Schema::create('salary', function (Blueprint $table) {
+            $table->foreignId('user_id')->nullable()->index();
+            $table->decimal('Pretax amount', 15, 2)->default(100);
+            $table->decimal('posttax amount', 15, 3)->default(1000);
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('finances');
-    }
+
 };

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SalaryController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -19,6 +20,12 @@ Route::get('/register', function () {
     return view('auth/register');
 });
 
+
+Route::get('/Salary_form', function () {
+    return view('forms/salary_form');
+})->name('salary_form');
+
+Route::post('/salary', [SalaryController::class, 'store'])->name('salary.store');
 
 
 Route::middleware('auth')->group(function () {

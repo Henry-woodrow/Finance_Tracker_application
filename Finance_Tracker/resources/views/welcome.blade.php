@@ -25,12 +25,12 @@
 <!-- Main Content -->
 <section id="content" class="max-w-5xl mx-auto mt-20 p-6 bg-white shadow-lg rounded-lg">
     <h2 class="text-3xl font-bold text-gray-800">About Us</h2>
-    <p class="mt-4 text-gray-600">We build amazing web experiences using modern technologies like Laravel, Tailwind CSS, and Alpine.js.</p>
+    <p class="mt-4 text-gray-600">Some highlights</p>
 
     <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="p-6 bg-gray-200 rounded-lg shadow-md">
-            <h3 class="text-xl font-semibold text-gray-700">Fast</h3>
-            <p class="mt-2 text-gray-600">Optimized for speed and performance.</p>
+            <h3 class="text-xl font-semibold text-gray-700">track your money</h3>
+            <p class="mt-2 text-gray-600">great for tracking money</p>
         </div>
         <div class="p-6 bg-gray-200 rounded-lg shadow-md">
             <h3 class="text-xl font-semibold text-gray-700">Responsive</h3>
@@ -42,29 +42,5 @@
         </div>
     </div>
 </section>
-
-<section id="hello" class="max-w-5xl mx-auto mt-20 p-6 bg-white shadow-lg rounded-lg">
-    <h2 class="text-3xl font-bold text-gray-800">About Us</h2>
-    <p class="mt-4 text-gray-600">We build amazing web experiences using modern technologies like Laravel, Tailwind CSS, and Alpine.js.</p>
-
-    <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="p-6 bg-gray-200 rounded-lg shadow-md">
-            <h3 class="text-xl font-semibold text-gray-700">Fast</h3>
-            <p class="mt-2 text-gray-600">Optimized for speed and performance.</p>
-        </div>
-        <div class="p-6 bg-gray-200 rounded-lg shadow-md">
-            <h3 class="text-xl font-semibold text-gray-700">Responsive</h3>
-            <p class="mt-2 text-gray-600">Looks great on all devices.</p>
-        </div>
-        <div class="p-6 bg-gray-200 rounded-lg shadow-md">
-            <h3 class="text-xl font-semibold text-gray-700">Modern</h3>
-            <p class="mt-2 text-gray-600">Built with the latest technologies.</p>
-        </div>
-    </div>
-</section>
-
-
-
-
 </body>
 </html>
