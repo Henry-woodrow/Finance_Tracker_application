@@ -5,6 +5,12 @@ use App\Http\Controllers\SalaryController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
+
+use App\Http\Controllers\Auth\PasswordResetLinkController;
+
+Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
+    ->name('password.email');
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -23,7 +29,8 @@ Route::get('/register', function () {
     return view('auth/register');
 });
 
-
+Route::get('forgot-password', [\App\Http\Controllers\Auth\PasswordResetLinkController::class, 'create'])
+    ->name('password.request');
 
 Route::get('/edit', [ProfileController::class, 'index'])->name('profile');
 
