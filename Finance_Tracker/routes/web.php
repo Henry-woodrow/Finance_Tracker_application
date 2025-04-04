@@ -7,13 +7,35 @@ use Illuminate\Support\Facades\Route;
 
 
 use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\GoalController;
+
+
+
+
+Route::delete('/goals/{goal}', [GoalController::class, 'destroy'])->name('goal.destroy');
+
+Route::post('/goals/submit', function (Illuminate\Http\Request $request) {
+    // Process goal submission logic
+    return redirect('/dashboard');
+})->name('goals.submit');
+
+
+Route::put('/goals/{goal}', [GoalController::class, 'update'])->name('goals.update');
+
+Route::middleware('auth')->group(function () {
+    Route::resource('goal', GoalController::class);
+});
 
 Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
     ->name('password.email');
 
+Route::get('/add_goal', function () {
+    return view('forms.Add_goal');
+})->name('goal.add');
+
 Route::get('/', function () {
     return view('welcome');
-});
+}) -> name('home');
 
 Route::get('/dashboard', function () {
     return view('dashboard');

@@ -23,7 +23,9 @@
 
             <!-- Logo -->
             <div class="flex items-center">
-                <h1 class="text-white font-bold">Finance Tracker</h1>
+                <a href="{{ route('home') }}" class="text-white font-bold hover:underline">
+                    Finance Tracker
+                </a>
             </div>
 
             <!-- Profile Dropdown -->
@@ -40,6 +42,7 @@
 
                         <!-- Dropdown Menu -->
                         <div x-show="dropdown" @click.away="dropdown = false" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 z-50">
+                            <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Dashboard</a>
                             <a href="{{ route('profile') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf

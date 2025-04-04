@@ -80,6 +80,6 @@ class SalaryController extends Controller
         }
 
         // Calculate post-tax income
-        return $income - $tax;
+        return round($income - $tax, 2);
     }
 }
