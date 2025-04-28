@@ -18,7 +18,7 @@ class GoalController extends Controller
      */
     public function index()
     {
-        $goals = Goal::where('user_id', Auth::id())->get();
+        $goals = goal::where('user_id', Auth::id())->get();
         $salary = Salary::where('user_id', Auth::id())->sum('posttax_amount');
         // Ensure the Salary model exists and is correctly defined in App\Models
         $number = 1;
@@ -45,8 +45,9 @@ class GoalController extends Controller
             'due_date' => 'nullable|date',
         ]);
 
-        Goal::create([
+        goal::create([
             'user_id' => Auth::id(),
+            'id' => $request->id,
             'goal_name' => $request->goal_name,
             'goal_amount' => $request->goal_amount,
             'current_amount' => 0,
@@ -60,7 +61,7 @@ class GoalController extends Controller
     /**
      * Display the specified goal.
      */
-    public function show(Goal $goal)
+    public function show(goal $goal)
     {
         $this->authorize('view', $goal);
 
@@ -70,7 +71,7 @@ class GoalController extends Controller
     /**
      * Show the form for editing the specified goal.
      */
-    public function edit(Goal $goal)
+    public function edit(goal $goal)
     {
         $this->authorize('update', $goal);
 
@@ -80,12 +81,22 @@ class GoalController extends Controller
     /**
      * Update the specified goal in storage.
      */
-    public function update(Request $request, Goal $goal)
+    public function update(Request $request, goal $goal)
     {
         $salary = Salary::where('user_id', Auth::id())->first();
        // Validate the input
         $request->validate([
-        'current_amount' => 'required|numeric|min:0',
+        'current_amount' => [
+            'required',
+            'numeric',
+            'min:0',
+            function ($attribute, $value, $fail) use ($goal) {
+                $remainingAmount = $goal->goal_amount - $goal->current_amount;
+                if ($value > $remainingAmount) {
+                    $fail("The amount exceeds the remaining goal amount of £" . number_format($remainingAmount, 2));
+                }
+            },
+        ],
         ]);
 
 
@@ -103,7 +114,7 @@ class GoalController extends Controller
         $goal->current_amount = $goal->current_amount + $request->current_amount;
         $goal->save();
 
-        $goals = Goal::where('user_id', Auth::id())->get();
+        $goals = goal::where('user_id', Auth::id())->get();
         $salary = Salary::where('user_id', Auth::id())->sum('posttax_amount');
         // Ensure the Salary model exists and is correctly defined in App\Models
         $number = 1;
@@ -121,7 +132,7 @@ class GoalController extends Controller
     /**
      * Remove the specified goal from storage.
      */
-    public function destroy(Goal $goal)
+    public function destroy(goal $goal)
     {
         $this->authorize('delete', $goal);
 

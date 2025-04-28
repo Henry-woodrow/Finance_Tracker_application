@@ -1,26 +1,33 @@
 <?php
 
+use App\Http\Controllers\MonthlyController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SalaryController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
-
-
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\GoalController;
 
 
 
+Route::post('/monthly', [MonthlyController::class, 'saveMonthly'])->name('monthly_save');
 
-Route::delete('/goals/{goal}', [GoalController::class, 'destroy'])->name('goal.destroy');
+
+Route::get('/monthly', function () {
+    return view('forms.Monthly');
+})->name('monthly_form');
+
+
+Route::post('/monthly', [MonthlyController::class, 'store'])->name('monthly.store');
 
 Route::post('/goals/submit', function (Illuminate\Http\Request $request) {
     // Process goal submission logic
     return redirect('/dashboard');
 })->name('goals.submit');
 
-
 Route::put('/goals/{goal}', [GoalController::class, 'update'])->name('goals.update');
+
+Route::delete('/goal/{goal}', [GoalController::class, 'destroy'])->name('goal.destroy');
 
 Route::middleware('auth')->group(function () {
     Route::resource('goal', GoalController::class);
@@ -35,13 +42,11 @@ Route::get('/add_goal', function () {
 
 Route::get('/', function () {
     return view('welcome');
-}) -> name('home');
+})->name('home');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::get('/login', function () {
     return view('auth/login');
@@ -51,18 +56,16 @@ Route::get('/register', function () {
     return view('auth/register');
 });
 
-Route::get('forgot-password', [\App\Http\Controllers\Auth\PasswordResetLinkController::class, 'create'])
+Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
     ->name('password.request');
 
 Route::get('/edit', [ProfileController::class, 'index'])->name('profile');
-
 
 Route::get('/Salary_form', function () {
     return view('forms/salary_form');
 })->name('salary_form');
 
 Route::post('/salary', [SalaryController::class, 'store'])->name('salary.store');
-
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -71,5 +74,3 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
-
-

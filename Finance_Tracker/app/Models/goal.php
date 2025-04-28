@@ -11,5 +11,5 @@ class goal extends Model
 
     protected $table = 'goals'; // table name
 
-    protected $fillable = ['user_id','goal_id' ,'goal_name', 'goal_amount', 'due_date', 'current_amount', 'target_amount'];
+    protected $fillable = ['user_id','id' ,'goal_name', 'goal_amount', 'due_date', 'current_amount', 'target_amount'];
 }

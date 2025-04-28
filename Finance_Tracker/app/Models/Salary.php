@@ -16,6 +16,7 @@ class Salary extends Model
 
     protected $fillable = [
         'user_id',
+        'pretax_amount',
         'posttax_amount',
         'created_at',
         'updated_at',
