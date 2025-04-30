@@ -5,11 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class weekly extends Model
+class Goal extends Model
 {
     use HasFactory;
 
-    protected $table = 'weekly'; // table name
-
-    protected $fillable = ['user_id', 'amount', 'date'];
+    protected $fillable = ['user_id', 'goal_name', 'goal_amount', 'due_date', 'current_amount', 'target_amount'];
 }

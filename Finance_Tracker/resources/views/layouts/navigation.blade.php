@@ -37,13 +37,13 @@
                     <!-- Profile Dropdown -->
                     <div class="relative" x-data="{ dropdown: false }">
                         <button @click="dropdown = !dropdown" class="block w-10 h-10 rounded-full overflow-hidden border-2 border-gray-300 hover:border-blue-500 focus:outline-none">
-                            <img src="{{ Auth::user()->profile_picture ?? asset('images/default-profile.png') }}" alt="Profile Picture" class="w-full h-full object-cover">
+                        <img src="{{ Auth::user()->profile_photo_url }}" alt="Profile Picture" class="w-full h-full object-cover">
                         </button>
 
                         <!-- Dropdown Menu -->
                         <div x-show="dropdown" @click.away="dropdown = false" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 z-50">
                             <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Dashboard</a>
-                            <a href="{{ route('profile') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
+                            <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Logout</button>

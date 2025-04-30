@@ -8,15 +8,40 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
+    public function updateProfilePhoto(Request $request)
+{
+    $request->validate([
+        'profile_photo' => 'required|image|max:2048',
+    ]);
+
+    $user = Auth::user();
+
+    if ($request->hasFile('profile_photo')) {
+        $file = $request->file('profile_photo');
+
+        $filename = $user->id . '.' . $file->getClientOriginalExtension();
+
+        // Correct upload path using the public disk
+        $file->storeAs('profile_photos', $filename, 'public');
+
+        $user->profile_photo = $filename;
+        $user->save();
+    }
+
+    return back()->with('success', 'Profile photo updated!');
+}
+    
+
     /**
      * Display the user's profile form.
      */
     public function edit(Request $request): View
     {
-        return view('profile.edit', [
+        return view('settings', [
             'user' => $request->user(),
         ]);
     }

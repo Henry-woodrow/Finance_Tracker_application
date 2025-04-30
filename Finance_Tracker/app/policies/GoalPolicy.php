@@ -1,20 +1,19 @@
 <?php
 namespace App\Policies;
 
-use App\Models\goal;
+use App\Models\Goal;
 use App\Models\User;
 
 class GoalPolicy
 {
-    /**
-     * Determine whether the user can delete the goal.
-     */
-    public function delete(User $user, goal $goal)
+    public function delete(User $user, Goal $goal)
     {
-        \Log::info('Checking delete authorization', [
+        \Log::info('GoalPolicy check', [
             'user_id' => $user->id,
             'goal_user_id' => $goal->user_id,
+            'match' => $user->id === $goal->user_id,
         ]);
-        return $user->id === $goal->user_id; // Allow only the owner to delete the goal
+
+        return $user->id === $goal->user_id;
     }
 }

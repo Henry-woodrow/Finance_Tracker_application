@@ -11,7 +11,10 @@ class Kernel extends ConsoleKernel
     {
         // your scheduled commands go here
         $schedule->command('monthly:refresh')->monthly();
+        $schedule->command('weekly:refresh')->weekly(); // or daily() or monthlyOn(1, '02:00')
     }
+
+    
 
     protected function commands()
     {

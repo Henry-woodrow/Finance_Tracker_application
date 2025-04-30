@@ -48,8 +48,8 @@
             @if ($number == 0)
                 <button onclick="window.location='{{ route('salary_form') }}'" class="bg-blue-600 hover:bg-blue-800 text-white font-semibold py-4 px-8 rounded-xl shadow-lg transition transform hover:scale-110">Add Salary</button>
                 <button onclick="window.location='{{ route('monthly_form') }}'" class="bg-blue-600 hover:bg-blue-800 text-white font-semibold py-4 px-8 rounded-xl shadow-lg transition transform hover:scale-110">Add Monthly</button>
-                <button class="bg-blue-600 hover:bg-blue-800 text-white font-semibold py-4 px-8 rounded-xl shadow-lg transition transform hover:scale-110">Add Weekly</button>
-            @else
+                <button onclick="window.location='{{ route('weekly_form') }}'" class="bg-blue-600 hover:bg-blue-800 text-white font-semibold py-4 px-8 rounded-xl shadow-lg transition transform hover:scale-110">Add Weekly</button>
+                @else
                 <button onclick="window.location='{{ route('goal.add') }}'" class="bg-blue-600 hover:bg-blue-800 text-white font-semibold py-4 px-8 rounded-xl shadow-lg transition transform hover:scale-110">Add Goal/Manage Goals</button>
                 <button class="bg-blue-600 hover:bg-blue-800 text-white font-semibold py-4 px-8 rounded-xl shadow-lg transition transform hover:scale-110">Add Bill/Manage Bills</button>
                 <button class="bg-blue-600 hover:bg-blue-800 text-white font-semibold py-4 px-8 rounded-xl shadow-lg transition transform hover:scale-110">Add 1 Off Payments</button>
@@ -81,7 +81,14 @@
                                     @method('PUT')
                                     <div class="mb-4">
                                         <label for="current_amount" class="block text-sm font-medium text-gray-300 mb-2">Add to Goal</label>
-                                        <input type="number" name="current_amount" id="amount_{{ $goal->id }}" placeholder="Enter amount" max="{{ $goal->goal_amount - $goal->current_amount }}" oninput="Alpine.store('goalValidation').validateAmount({{ $goal->id }}, {{ $goal->goal_amount - $goal->current_amount }})" class="w-full px-4 py-2 text-gray-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" required>
+                                        <input type="number"
+                                            name="current_amount"
+                                            id="amount_{{ $goal->id }}"
+                                            placeholder="Enter amount"
+                                            max="{{ ($goal->goal_amount - $goal->current_amount) }}"
+                                            oninput="Alpine.store('goalValidation').validateAmount({{ $goal->id }}, {{ ($goal->goal_amount - $goal->current_amount) }})"
+                                            class="w-full px-4 py-2 text-gray-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                            required>
                                         <p id="error_{{ $goal->id }}" class="text-red-400 text-sm mt-2"></p>
                                         @error('current_amount')
                                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -91,7 +98,7 @@
                                 </form>
 
                                 <!-- Delete Goal Form -->
-                                <form action="{{ route('goal.destroy', $goal) }}" method="POST" class="mt-4">
+                                <form action="{{ route('goal.destroy', $goal->id) }}" method="POST" class="mt-4">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-lg shadow-lg transition duration-300">Delete Goal</button>

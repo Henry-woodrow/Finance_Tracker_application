@@ -2,28 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\goal;
 use Illuminate\Http\Request;
-
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Goal;
 use App\Models\Salary;
+use App\Models\monthly;
+use App\Models\weekly;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Carbon\Carbon;
 
 class GoalController extends Controller
 {
-
     use AuthorizesRequests;
+
     /**
      * Display a listing of the goals.
      */
     public function index()
     {
-        $goals = goal::where('user_id', Auth::id())->get();
+        $goals = Goal::where('user_id', Auth::id())->get();
         $salary = Salary::where('user_id', Auth::id())->sum('posttax_amount');
-        // Ensure the Salary model exists and is correctly defined in App\Models
-        $number = 1;
-        return view('dashboard', compact('number' , 'goals', 'salary'));
+        $monthlyTotal = $this->calculateMonthlyTotal();
+        $weeklyTotal = $this->calculateWeeklyTotal();
 
+        $number = $this->calculateNumber($salary, $monthlyTotal, $weeklyTotal);
+
+        return view('dashboard', compact('number', 'goals', 'salary'));
     }
 
     /**
@@ -45,9 +49,8 @@ class GoalController extends Controller
             'due_date' => 'nullable|date',
         ]);
 
-        goal::create([
+        Goal::create([
             'user_id' => Auth::id(),
-            'id' => $request->id,
             'goal_name' => $request->goal_name,
             'goal_amount' => $request->goal_amount,
             'current_amount' => 0,
@@ -59,85 +62,129 @@ class GoalController extends Controller
     }
 
     /**
-     * Display the specified goal.
-     */
-    public function show(goal $goal)
-    {
-        $this->authorize('view', $goal);
-
-        return view('goal.show', compact('goal'));
-    }
-
-    /**
-     * Show the form for editing the specified goal.
-     */
-    public function edit(goal $goal)
-    {
-        $this->authorize('update', $goal);
-
-        return view('goal.edit', compact('goal'));
-    }
-
-    /**
      * Update the specified goal in storage.
      */
-    public function update(Request $request, goal $goal)
+    public function update(Request $request, $id)
     {
+    $goal = Goal::where('user_id', Auth::id())->findOrFail($id);
+    $this->authorize('update', $goal);
+
         $salary = Salary::where('user_id', Auth::id())->first();
-       // Validate the input
+        $monthlyTotal = $this->calculateMonthlyTotal();
+        $weeklyTotal = $this->calculateWeeklyTotal();
+
         $request->validate([
-        'current_amount' => [
-            'required',
-            'numeric',
-            'min:0',
-            function ($attribute, $value, $fail) use ($goal) {
-                $remainingAmount = $goal->goal_amount - $goal->current_amount;
-                if ($value > $remainingAmount) {
-                    $fail("The amount exceeds the remaining goal amount of £" . number_format($remainingAmount, 2));
-                }
-            },
-        ],
+            'current_amount' => [
+                'required',
+                'numeric',
+                'min:0',
+                function ($attribute, $value, $fail) use ($goal) {
+                    $remainingAmount = $goal->goal_amount - $goal->current_amount;
+                    if ($value > $remainingAmount) {
+                        $fail("The amount exceeds the remaining goal amount of £" . number_format($remainingAmount, 2));
+                    }
+                },
+            ],
         ]);
 
+        // Deduct from appropriate balance
+        if ($salary && $salary->posttax_amount >= $request->current_amount) {
+            $salary->posttax_amount -= $request->current_amount;
+            $salary->save();
+        } elseif ($monthlyTotal >= $request->current_amount) {
+            $monthlyEntry = Monthly::where('user_id', Auth::id())->first();
+            $monthlyEntry->amount -= $request->current_amount;
+            $monthlyEntry->save();
+        } elseif ($weeklyTotal >= $request->current_amount) {
+            $weeklyEntry = Weekly::where('user_id', Auth::id())->first();
+            $weeklyEntry->amount -= $request->current_amount;
+            $weeklyEntry->save();
+        } else {
+            return redirect()->route('dashboard')->with('error', 'Insufficient balance to add to the goal.');
+        }
 
-
-        // subtract the current amount from the salary
-
-
-    // Check if the salary exists and if the user has enough post-tax balance
-    if (($salary && $salary->posttax_amount >= $request->current_amount) && ($goal->goal_amount >= $goal->current_amount)){
-        // Deduct the entered amount from the salary's post-tax amount
-        $salary = Salary::where('user_id', Auth::id())->first();
-        $salary->posttax_amount -= $request->current_amount;
-        $salary->save();
-        // Add the entered amount to the goal's current amount
-        $goal->current_amount = $goal->current_amount + $request->current_amount;
+        // Update goal amount
+        $goal->current_amount += $request->current_amount;
         $goal->save();
 
-        $goals = goal::where('user_id', Auth::id())->get();
-        $salary = Salary::where('user_id', Auth::id())->sum('posttax_amount');
-        // Ensure the Salary model exists and is correctly defined in App\Models
-        $number = 1;
-        return view('dashboard', compact('number' , 'goals', 'salary'));
-
-    }
-
-    // If the user doesn't have enough balance, redirect back with an error message
-    return redirect()->route('dashboard')->with('error', 'Insufficient balance to add to the goal.');
-
-
-
+        return redirect()->route('dashboard')->with('success', 'Goal updated successfully!');
     }
 
     /**
      * Remove the specified goal from storage.
      */
-    public function destroy(goal $goal)
+    public function destroy($id)
     {
+        \Log::info('HIT DESTROY CONTROLLER');
+    
+        $goal = Goal::where('user_id', Auth::id())->findOrFail($id);
+    
+        \Log::info('FOUND GOAL', ['id' => $goal->id]);
+        if (\Gate::denies('delete', $goal)) {
+            \Log::info('Gate denied deletion manually');
+            abort(403, 'Manual gate denied.');
+        }
+    
         $this->authorize('delete', $goal);
-
+    
+        \Log::info('AUTHORIZED GOAL DELETION');
+    
         $goal->delete();
-
+    
         return redirect()->route('dashboard')->with('success', 'Goal deleted successfully!');
+    }
+    
+    /**
+     * Helper function to calculate monthly total.
+     */
+    private function calculateMonthlyTotal()
+    {
+        $entries = Monthly::where('user_id', Auth::id())->get();
+        $total = 0;
+
+        foreach ($entries as $entry) {
+            $entryDate = Carbon::parse($entry->date)->startOfMonth();
+            $now = Carbon::now()->startOfMonth();
+            $monthsPassed = $entryDate->diffInMonths($now);
+            $monthsPassed = max(1, $monthsPassed);
+            $total += $entry->amount * $monthsPassed;
+        }
+
+        return $total;
+    }
+
+    /**
+     * Helper function to calculate weekly total.
+     */
+    private function calculateWeeklyTotal()
+    {
+        $entries = Weekly::where('user_id', Auth::id())->get();
+        $total = 0;
+
+        foreach ($entries as $entry) {
+            $entryDate = Carbon::parse($entry->date)->startOfWeek();
+            $now = Carbon::now()->startOfWeek();
+            $weeksPassed = $entryDate->diffInWeeks($now);
+            $weeksPassed = max(1, $weeksPassed);
+            $total += $entry->amount * $weeksPassed;
+        }
+
+        return $total;
+    }
+
+    /**
+     * Helper function to determine which value to use.
+     */
+    private function calculateNumber($salary, $monthlyTotal, $weeklyTotal)
+    {
+        if ($salary > 0) {
+            return $salary;
+        } elseif ($monthlyTotal > 0) {
+            return $monthlyTotal;
+        } elseif ($weeklyTotal > 0) {
+            return $weeklyTotal;
+        } else {
+            return 0;
+        }
     }
 }

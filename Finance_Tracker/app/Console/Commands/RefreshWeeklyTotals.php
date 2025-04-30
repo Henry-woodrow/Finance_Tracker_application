@@ -3,27 +3,27 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Models\monthly;
+use App\Models\weekly;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
-class RefreshMonthlyTotals extends Command
+class RefreshWeeklyTotals extends Command
 {
-    protected $signature = 'monthly:refresh';
+    protected $signature = 'weekly:refresh';
 
-    protected $description = 'Refresh total_monthly for all users';
+    protected $description = 'Refresh total_weekly for all users';
 
     public function handle()
     {
         $this->info('Refreshing monthly totals...');
 
-        $entries = monthly::all();
+        $entries = weekly::all();
 
         foreach ($entries as $entry) {
             $entryDate = Carbon::parse($entry->date)->startOfMonth();
             $now = Carbon::now()->startOfMonth();
-            $monthsPassed = $entryDate->diffInMonths($now);
-            $monthsPassed = max(1, $monthsPassed);
+            $weeksPassed = $entryDate->diffInWeeks($now);
+            $monthsPassed = max(1, $weeksPassed);
 
             $newTotal = $entry->amount * $monthsPassed;
 
@@ -32,6 +32,8 @@ class RefreshMonthlyTotals extends Command
             ]);
         }
 
-        $this->info('Monthly totals refreshed successfully.');
+        $this->info('weeks totals refreshed successfully.');
     }
 }
+
+
