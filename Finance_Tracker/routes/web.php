@@ -103,7 +103,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/goal', [GoalController::class, 'index'])->name('goal.index');
     Route::post('/goal', [GoalController::class, 'store'])->name('goal.store');
-    Route::put('/goal/{id}', [GoalController::class, 'update'])->name('goal.update');
+    Route::put('/goals/{id}', [GoalController::class, 'update'])->name('goal.update');
     Route::delete('/goal/{id}', [GoalController::class, 'destroy'])->name('goal.destroy');
 });
 

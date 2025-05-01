@@ -27,7 +27,7 @@ class GoalController extends Controller
 
         $number = $this->calculateNumber($salary, $monthlyTotal, $weeklyTotal);
 
-        return view('dashboard', compact('number', 'goals', 'salary'));
+        return redirect()->route('dashboard')->with('success', 'Goal created successfully!');
     }
 
     /**
@@ -67,8 +67,9 @@ class GoalController extends Controller
     public function update(Request $request, $id)
     {
     $goal = Goal::where('user_id', Auth::id())->findOrFail($id);
-    $this->authorize('update', $goal);
-
+    if ($goal->user_id !== Auth::id()) {
+        abort(403, 'Unauthorized');
+    }
         $salary = Salary::where('user_id', Auth::id())->first();
         $monthlyTotal = $this->calculateMonthlyTotal();
         $weeklyTotal = $this->calculateWeeklyTotal();
@@ -115,20 +116,7 @@ class GoalController extends Controller
      */
     public function destroy($id)
     {
-        \Log::info('HIT DESTROY CONTROLLER');
-    
         $goal = Goal::where('user_id', Auth::id())->findOrFail($id);
-    
-        \Log::info('FOUND GOAL', ['id' => $goal->id]);
-        if (\Gate::denies('delete', $goal)) {
-            \Log::info('Gate denied deletion manually');
-            abort(403, 'Manual gate denied.');
-        }
-    
-        $this->authorize('delete', $goal);
-    
-        \Log::info('AUTHORIZED GOAL DELETION');
-    
         $goal->delete();
     
         return redirect()->route('dashboard')->with('success', 'Goal deleted successfully!');
