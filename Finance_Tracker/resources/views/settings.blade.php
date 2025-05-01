@@ -19,19 +19,20 @@
                     <input type="file" id="profile_photo" name="profile_photo" class="hidden" onchange="document.getElementById('profilePhotoForm').submit()" />
                 </div>
             </form>
-
-                <h2 class="text-3xl font-bold">{{ Auth::user()->name }}</h2>
+                <h2 class="text-3xl font-bold">{{ auth()->user()->fresh()->email }}</h2>
             </div>
 
             <div class="space-y-6">
                 <!-- Email Button -->
                 <div>
-                    <a href="#" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg text-center shadow">Change Email</a>
+                <a href="{{ route('email.edit') }}" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg text-center shadow">
+                    Change Email
+                </a>
                 </div>
 
                 <!-- Password Button -->
                 <div>
-                    <a href="#" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg text-center shadow">Change Password</a>
+                    <a href="{{ route('password.edit') }}" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg text-center shadow">Change Password</a>
                 </div>
 
                 <div>

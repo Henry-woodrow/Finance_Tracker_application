@@ -34,7 +34,45 @@ class ProfileController extends Controller
 
     return back()->with('success', 'Profile photo updated!');
 }
-    
+
+
+    public function editEmail()
+    {
+    return view('forms.settings.change_email');
+    }
+
+    public function updateEmail(Request $request)
+    {
+        $request->validate([
+        'email' => 'required|email|unique:users,email,' . auth()->id(),
+    ]);
+
+    $user = auth()->user();
+    $user->email = $request->input('email');
+    $user->save();
+
+    return redirect()->route('profile.edit')->with('success', 'Email updated successfully.');
+}
+
+public function editPassword()
+{
+    return view('forms.settings.change_password');
+}
+
+public function updatePassword(Request $request)
+{
+    $request->validate([
+        'current_password' => ['required', 'current_password'],
+        'password' => ['required', 'confirmed', 'min:8'],
+    ]);
+
+    $user = auth()->user();
+    $user->password = bcrypt($request->password);
+    $user->save();
+
+    return redirect()->route('profile.edit')->with('success', 'Password changed successfully!');
+}
+
 
     /**
      * Display the user's profile form.

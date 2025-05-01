@@ -17,8 +17,16 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 
 
 
-// Profile photo upload route
+// Profile
 Route::post('/profile/photo', [ProfileController::class, 'updateProfilePhoto'])->name('profile.photo');
+Route::get('forms/settings/change_email', [ProfileController::class, 'editEmail'])->name('email.edit');
+Route::post('forms/settings/change_email', [ProfileController::class, 'updateEmail'])->name('email.update');
+
+// Show the change password form
+Route::get('forms/settings/change_password', [ProfileController::class, 'editPassword'])->name('password.edit');
+
+// Handle form submission
+Route::put('forms/settings/change_password', [ProfileController::class, 'updatePassword'])->name('password.update');
 
 
 Route::get('/', function () {
