@@ -11,26 +11,35 @@ class MonthlyController extends Controller
      * Store a newly created monthly entry in storage.
      */
     public function store(Request $request)
-{
-    $request->validate([
-        'amount' => 'required|numeric|min:0',
-        'date' => 'required|date', // Make sure you require a date too
-    ]);
-
-    $entryDate = Carbon::parse($request->input('date'))->startOfMonth();
-    $now = Carbon::now()->startOfMonth();
-    $monthsPassed = $entryDate->diffInMonths($now);
-    $monthsPassed = max(1, $monthsPassed);
-
-    $totalMonthly = $request->input('amount') * $monthsPassed;
-
-    Monthly::create([
-        'user_id' => Auth::id(),
-        'amount' => $request->input('amount'),
-        'date' => $request->input('date'),
-        'total_monthly' => $totalMonthly,
-    ]);
-
-    return redirect()->route('dashboard')->with('success', 'Monthly amount added successfully!');
-}
-}
+    {
+        $request->validate([
+            'amount' => 'required|numeric|min:0',
+            'date' => 'required|date',
+        ]);
+    
+        $amount = $request->input('amount');
+        $entryDate = Carbon::parse($request->input('date'))->startOfMonth();
+        $now = Carbon::now()->startOfMonth();
+    
+        // Calculate full months between entry date and now
+        $monthsPassed = 0;
+        if ($entryDate->lessThan($now)) {
+            $monthsPassed = $entryDate->diffInMonths($now);
+        }
+    
+        // Add the amount once for each full month passed
+        $totalMonthly = 0;
+        for ($i = 0; $i < $monthsPassed; $i++) {
+            $totalMonthly += $amount;
+        }
+    
+        Monthly::create([
+            'user_id' => Auth::id(),
+            'amount' => $amount,
+            'date' => $request->input('date'),
+            'total_monthly' => $totalMonthly,
+        ]);
+    
+        return redirect()->route('dashboard')->with('success', 'Monthly amount added successfully!');
+    }
+}    

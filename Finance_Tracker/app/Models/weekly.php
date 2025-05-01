@@ -11,5 +11,5 @@ class weekly extends Model
 
     protected $table = 'weekly'; // table name
 
-    protected $fillable = ['user_id', 'amount', 'date'];
+    protected $fillable = ['user_id', 'amount', 'date', 'weekly_total'];
 }

@@ -21,20 +21,24 @@ class WeeklyController extends Controller
             'date' => 'required|date',
         ]);
         
-
-
-        $entryDate = Carbon::parse($request->input('date'))->startOfMonth();
-        $now = Carbon::now()->startOfMonth();
-        $weeksPassed = $entryDate->diffInWeeks($now);
-        $weeksPassed = max(1, $weeksPassed);
-    
-        $totalweekly = $request->input('amount') * $weeksPassed;
-
+        // Get the user input
+        $amount = $request->input('amount');
+        $dateInput = Carbon::parse($request->input('date'));
+        $now = Carbon::now();
+        
+        $weeksPassed = 1;
+        if ($dateInput->lessThan($now)) {
+            $weeksPassed = $dateInput->diffInWeeks($now);
+        }
+        $totalweekly = 0;
+        for ($i = 0; $i < $weeksPassed; $i++) {
+            $totalweekly = $totalweekly + $amount;
+        }
         Weekly::create([
             'user_id' => Auth::id(),
             'amount' => $request->input('amount'),
             'date' => $request->input('date'),
-            'total_weekly' => $totalweekly
+            'weekly_total' => $totalweekly
         ]);
     
         return redirect()->route('dashboard')->with('success', 'Weekly wage added.');
