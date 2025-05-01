@@ -5,44 +5,42 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Salary;
 use App\Models\Goal;
-use App\Models\monthly; // Import the Monthly model
+use App\Models\monthly;
+use App\Models\weekly;
+use App\Models\Gift_money;
 use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon; // Import Carbon for date calculations
-use App\Http\Controllers\Controller;
-use App\Models\weekly; // Import the Weekly model
+use App\Models\Bills;
+
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        // Fetch the goals as a collection
-        $goals = Goal::where('user_id', Auth::id())->get();
+        $userId = Auth::id();
 
-        // Fetch the sum of the posttax_amount column from the salary table
-        $salary = Salary::where('user_id', Auth::id())->sum('posttax_amount');
+        // Fetch data
+        $goals = Goal::where('user_id', $userId)->get();
+        $bills = Bills::where('user_id', Auth::id())->get();
+        $salary = Salary::where('user_id', $userId)->sum('posttax_amount');
+        $monthlyTotal = monthly::where('user_id', $userId)->sum('total_monthly');
+        $weeklyTotal = weekly::where('user_id', $userId)->sum('weekly_total');
+        $giftTotal = Gift_money::where('user_id', $userId)->sum('amount');
 
-        // Fetch the monthly entries for the user
-        $monthlyEntries = monthly::where('user_id', Auth::id())->get();
-
-        // Calculate the total monthly amount based on months passed
-        
-        $monthlyTotal = monthly::where('user_id', Auth::id())->sum('total_monthly');
-
-        // weekly entries for the user
-        $weeklyTotal = Weekly::where('user_id', Auth::id())->sum('weekly_total');
-        
-        // Determine the value of $number based on salary, monthly, and weekly
+        // Base number logic
         if ($salary > 0) {
             $number = $salary;
         } elseif ($monthlyTotal > 0) {
-            $number = $monthlyTotal; // Indicate that monthly is being used
+            $number = $monthlyTotal;
         } elseif ($weeklyTotal > 0) {
-            $number = $weeklyTotal; // Indicate that weekly is being used
+            $number = $weeklyTotal;
         } else {
-            $number = 0; // No salary, monthly, or weekly amount
+            $number = 0;
         }
 
-        // Pass the data to the view
-        return view('dashboard', compact('salary', 'monthlyTotal', 'weeklyTotal', 'number', 'goals'));
+        // Add gift money to the total
+        $number += $giftTotal;
+
+        // Pass to view
+        return view('dashboard', compact('salary', 'monthlyTotal', 'weeklyTotal', 'number', 'goals', 'bills'));
     }
 }

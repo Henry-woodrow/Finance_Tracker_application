@@ -51,12 +51,16 @@
                 <button onclick="window.location='{{ route('weekly_form') }}'" class="bg-blue-600 hover:bg-blue-800 text-white font-semibold py-4 px-8 rounded-xl shadow-lg transition transform hover:scale-110">Add Weekly</button>
             @else
                 <button onclick="window.location='{{ route('goal.add') }}'" class="bg-blue-600 hover:bg-blue-800 text-white font-semibold py-4 px-8 rounded-xl shadow-lg transition transform hover:scale-110">Add Goal/Manage Goals</button>
-                <button class="bg-blue-600 hover:bg-blue-800 text-white font-semibold py-4 px-8 rounded-xl shadow-lg transition transform hover:scale-110" disabled>Bill management coming soon</button>
-                <button class="bg-blue-600 hover:bg-blue-800 text-white font-semibold py-4 px-8 rounded-xl shadow-lg transition transform hover:scale-110">Add 1 Off Payments</button>
+                <button onclick="window.location='{{ route('bills.form') }}'" class="bg-blue-600 hover:bg-blue-800 text-white font-semibold py-4 px-8 rounded-xl shadow-lg transition transform hover:scale-110">Add Bill/Manage Bills</button>
+                <a href="{{ route('gifts.create') }}">
+                    <button class="bg-blue-600 hover:bg-blue-800 text-white font-semibold py-4 px-8 rounded-xl shadow-lg transition transform hover:scale-110">
+                        Add 1 Off Payments
+                    </button>
+                </a>
             @endif
         </div>
 
-        <!-- Bottom Half: Goals -->
+        <!-- Bottom Half: Goals and Bills -->
         <div class="flex flex-col lg:flex-row justify-between gap-6 mt-16">
 
             <!-- Goals Section (Left) -->
@@ -95,12 +99,20 @@
                 @endforeach
             </div>
 
-            <!-- Bills Section Placeholder (Right) -->
+            <!-- Bills Section (Right) -->
             <div class="w-full lg:w-1/2">
                 <h2 class="text-4xl font-bold text-white mb-4">Bills</h2>
-                <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
-                    <p class="text-gray-300">Bill management will be added soon. Stay tuned!</p>
-                </div>
+                @foreach ($bills as $bill)
+                    <div class="bg-gray-800 p-6 rounded-lg shadow-lg mb-4">
+                        <h3 class="text-2xl font-bold">{{ $bill->bill_name }}</h3>
+                        <p class="text-gray-300 mt-2">Amount: £{{ number_format($bill->amount, 2) }}</p>
+                        <form action="{{ route('bills.destroy', $bill->id) }}" method="POST" class="mt-4">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 rounded-lg shadow">Delete</button>
+                        </form>
+                    </div>
+                @endforeach
             </div>
 
         </div>

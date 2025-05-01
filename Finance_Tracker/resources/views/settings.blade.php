@@ -47,6 +47,11 @@
                     <a href="#" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg text-center shadow">Change weekly</a>
                 </div>
 
+                <div>
+                    <a href="#" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg text-center shadow">edit/delete gifts</a>
+                </div>
+
+
                 
 
                 <!-- Theme Toggle -->

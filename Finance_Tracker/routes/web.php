@@ -10,17 +10,29 @@ use App\Http\Controllers\MonthlyController;
 use App\Http\Controllers\WeeklyController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\BillController;
 
-// ─────────────────────────────────────────────
-// PUBLIC ROUTES
-// ─────────────────────────────────────────────
 
+
+use App\Http\Controllers\GiftController;
+// gift money
+Route::get('forms/one_off_payments', [GiftController::class, 'create'])->name('gifts.create');
+Route::post('/gifts', [GiftController::class, 'store'])->name('gifts.store');
+
+// Bills
+Route::post('/bills', [BillController::class, 'store'])->name('bills.store');
+Route::delete('/bills/{id}', [BillController::class, 'destroy'])->name('bills.destroy');
+Route::get('/forms/add_bill', function () {
+    return view('/forms/add_bill');
+})->name('bills.form');
 
 
 // Profile
 Route::post('/profile/photo', [ProfileController::class, 'updateProfilePhoto'])->name('profile.photo');
 Route::get('forms/settings/change_email', [ProfileController::class, 'editEmail'])->name('email.edit');
 Route::post('forms/settings/change_email', [ProfileController::class, 'updateEmail'])->name('email.update');
+
+
 
 // Show the change password form
 Route::get('forms/settings/change_password', [ProfileController::class, 'editPassword'])->name('password.edit');
