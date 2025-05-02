@@ -89,11 +89,29 @@
                                 </div>
                                 <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg shadow-lg transition duration-300">Add to Goal</button>
                             </form>
-                            <form action="{{ route('goal.destroy', $goal->id) }}" method="POST" class="mt-4">
+                            <form action="{{ route('goal.destroy', $goal->id) }}" method="POST" onsubmit="return confirmDelete({{ $goal->current_amount }})">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-lg shadow-lg transition duration-300">Delete Goal</button>
+                                <input type="hidden" name="refund" value="0">
+                                <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-lg shadow-lg transition duration-300">
+                                    Delete Goal
+                                </button>
                             </form>
+
+
+                            <script>
+                                function confirmDelete(currentAmount) {
+                                const confirmRefund = confirm(`Do you want to return £${currentAmount.toFixed(2)} to your balance?\n\nClick OK to refund it, Cancel to skip refund.`);
+
+                                // Dynamically set the hidden refund input
+                                const form = event.target.closest('form');
+                                const refundInput = form.querySelector('input[name="refund"]');
+                                refundInput.value = confirmRefund ? 1 : 0;
+
+                                return true;
+                        }
+                    </script>
+
                         </div>
                     </div>
                 @endforeach
@@ -106,11 +124,24 @@
                     <div class="bg-gray-800 p-6 rounded-lg shadow-lg mb-4">
                         <h3 class="text-2xl font-bold">{{ $bill->bill_name }}</h3>
                         <p class="text-gray-300 mt-2">Amount: £{{ number_format($bill->amount, 2) }}</p>
-                        <form action="{{ route('bills.destroy', $bill->id) }}" method="POST" class="mt-4">
+                        <form action="{{ route('bills.destroy', $bill->id) }}" method="POST" onsubmit="return confirmBillRefund({{ $bill->amount }})">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 rounded-lg shadow">Delete</button>
+                            <input type="hidden" name="refund" value="0">
+                            <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 rounded-lg shadow">
+                                Delete
+                            </button>
                         </form>
+
+                        <script>
+                            function confirmBillRefund(amount) {
+                            const refund = confirm(`Do you want to refund £${amount.toFixed(2)} to your balance when deleting this bill?`);
+                            const form = event.target.closest('form');
+                            const refundInput = form.querySelector('input[name="refund"]');
+                            refundInput.value = refund ? 1 : 0;
+                            return true;
+                            }
+                        </script>
                     </div>
                 @endforeach
             </div>

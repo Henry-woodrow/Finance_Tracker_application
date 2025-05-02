@@ -8,9 +8,9 @@ use App\Models\Goal;
 use App\Models\monthly;
 use App\Models\weekly;
 use App\Models\Gift_money;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Bills;
-
+use App\Models\Balance;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
@@ -20,25 +20,28 @@ class DashboardController extends Controller
 
         // Fetch data
         $goals = Goal::where('user_id', $userId)->get();
-        $bills = Bills::where('user_id', Auth::id())->get();
+        $bills = Bills::where('user_id', $userId)->get();
         $salary = Salary::where('user_id', $userId)->sum('posttax_amount');
         $monthlyTotal = monthly::where('user_id', $userId)->sum('total_monthly');
         $weeklyTotal = weekly::where('user_id', $userId)->sum('weekly_total');
         $giftTotal = Gift_money::where('user_id', $userId)->sum('amount');
 
-        // Base number logic
+        // Determine balance source
+        $base = 0;
         if ($salary > 0) {
-            $number = $salary;
+            $base = $salary;
         } elseif ($monthlyTotal > 0) {
-            $number = $monthlyTotal;
+            $base = $monthlyTotal;
         } elseif ($weeklyTotal > 0) {
-            $number = $weeklyTotal;
-        } else {
-            $number = 0;
+            $base = $weeklyTotal;
         }
 
-        // Add gift money to the total
-        $number += $giftTotal;
+        // Add gifts only (bills and goals handled manually via refund logic)
+        $balance = Balance::firstOrCreate(['user_id' => $userId]);
+        
+
+        // Get final balance value
+        $number = $balance->number;
 
         // Pass to view
         return view('dashboard', compact('salary', 'monthlyTotal', 'weeklyTotal', 'number', 'goals', 'bills'));

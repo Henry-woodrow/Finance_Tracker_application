@@ -1,4 +1,3 @@
-<!-- filepath: /d:/repostories/Finance_Tracker_application/Finance_Tracker/resources/views/forms/salary_form.blade.php -->
 <!DOCTYPE html>
 <html lang="en">
 <head>

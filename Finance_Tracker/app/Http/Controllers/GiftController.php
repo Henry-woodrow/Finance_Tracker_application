@@ -34,6 +34,11 @@ class GiftController extends Controller
             'gift_description' => $request->input('gift_description'),
         ]);
 
+
+        $balance = \App\Models\Balance::firstOrCreate(['user_id' => Auth::id()]);
+        $balance->number += $request->input('amount');
+        $balance->save();
+        
         return redirect()->route('dashboard')->with('success', 'One-off payment added!');
     }
 }

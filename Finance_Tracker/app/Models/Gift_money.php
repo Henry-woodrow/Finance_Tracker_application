@@ -13,3 +13,5 @@ class Gift_money extends Model
 
     protected $fillable = ['user_id','amount', 'gift_name', 'gift_description']; // fillable fields
 }
+
+

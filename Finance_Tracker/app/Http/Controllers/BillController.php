@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Bills;
+use App\Models\Balance;
 use Illuminate\Support\Facades\Auth;
 
 class BillController extends Controller
@@ -21,15 +22,28 @@ class BillController extends Controller
             'amount' => $request->input('amount'),
             'due_date' => $request->input('due_date'),
         ]);
-    
+        
+        $balance = Balance::firstOrCreate(['user_id' => Auth::id()]);
+        $balance->number -= $request->input('amount');
+        $balance->save();
+
         return redirect()->route('dashboard')->with('success', 'Bill added successfully!');
     }
     
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        $bill = Bills::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
+        $bill = Bills::where('user_id', Auth::id())->findOrFail($id);
+    
+        $refund = $request->input('refund');
+    
+        if ($refund && $bill->amount > 0) {
+            $balance = Balance::firstOrCreate(['user_id' => Auth::id()]);
+            $balance->number += $bill->amount;
+            $balance->save();
+        }
+    
         $bill->delete();
     
-        return redirect()->route('dashboard')->with('success', 'Bill deleted.');
+        return redirect()->route('dashboard')->with('success', 'Bill deleted successfully!');
     }
 }

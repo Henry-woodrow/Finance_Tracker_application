@@ -1,4 +1,3 @@
-<!-- filepath: /home/henrywoodrow/repos/Finance_Tracker_application/Finance_Tracker/resources/views/forms/Weekly.blade.php -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
