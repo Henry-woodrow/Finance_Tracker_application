@@ -11,9 +11,8 @@ use App\Http\Controllers\WeeklyController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\BillController;
-
-
-
+use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\GiftController;
 // gift money
 Route::get('forms/one_off_payments', [GiftController::class, 'create'])->name('gifts.create');
@@ -62,9 +61,12 @@ Route::middleware(['auth'])->group(function () {
         return view('settings');
     })->name('settings');
 });
-// ─────────────────────────────────────────────
-// AUTHENTICATED ROUTES
-// ─────────────────────────────────────────────
+
+
+//delete
+Route::post('/settings/reset', [SettingsController::class, 'reset'])->name('settings.reset');
+
+
 
 Route::middleware(['auth'])->group(function () {
     // Dashboard
@@ -83,7 +85,7 @@ Route::middleware(['auth'])->group(function () {
         return view('forms/salary_form');
     })->name('salary_form');
     Route::post('/salary', [SalaryController::class, 'store'])->name('salary.store');
-
+    Route::match(['get', 'post'], '/salary/edit', [SalaryController::class, 'edit'])->name('salary.edit');
     // Monthly
     Route::get('/monthly', function () {
         return view('forms.Monthly');
@@ -106,6 +108,23 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/goals/{id}', [GoalController::class, 'update'])->name('goal.update');
     Route::delete('/goal/{id}', [GoalController::class, 'destroy'])->name('goal.destroy');
     
+});
+
+
+
+
+
+
+
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+    Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+    
+});
+Route::middleware(['auth', 'admin'])->get('/admin/test', function () {
+    return 'Admin access granted!';
 });
 
 // ─────────────────────────────────────────────

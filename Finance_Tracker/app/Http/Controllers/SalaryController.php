@@ -32,6 +32,7 @@ class SalaryController extends Controller
         return redirect()->route('dashboard')->with('success', 'Salary added successfully!');
     }
 
+    
     /**
      * Calculate the post-tax salary based on the UK tax system.
      */
@@ -82,4 +83,5 @@ class SalaryController extends Controller
         // Calculate post-tax income
         return round($income - $tax, 2);
     }
+
 }

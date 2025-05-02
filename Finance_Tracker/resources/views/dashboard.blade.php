@@ -121,17 +121,25 @@
             <div class="w-full lg:w-1/2">
                 <h2 class="text-4xl font-bold text-white mb-4">Bills</h2>
                 @foreach ($bills as $bill)
-                    <div class="bg-gray-800 p-6 rounded-lg shadow-lg mb-4">
-                        <h3 class="text-2xl font-bold">{{ $bill->bill_name }}</h3>
-                        <p class="text-gray-300 mt-2">Amount: £{{ number_format($bill->amount, 2) }}</p>
-                        <form action="{{ route('bills.destroy', $bill->id) }}" method="POST" onsubmit="return confirmBillRefund({{ $bill->amount }})">
-                            @csrf
-                            @method('DELETE')
-                            <input type="hidden" name="refund" value="0">
-                            <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 rounded-lg shadow">
-                                Delete
-                            </button>
-                        </form>
+                <div class="bg-gray-800 p-6 rounded-lg shadow-lg mb-4">
+                    <h3 class="text-2xl font-bold">{{ $bill->bill_name }}</h3>
+                    <p class="text-gray-300 mt-2">Amount: £{{ number_format($bill->amount, 2) }}</p>
+
+                    @if ($bill->is_recurring)
+                        <p class="text-green-400 mt-2 font-medium">🔁 Recurring ({{ ucfirst($bill->recurring_type) }})</p>
+                    @else
+                        <p class="text-gray-400 mt-2 italic">One-off bill</p>
+                    @endif
+
+                    <form action="{{ route('bills.destroy', $bill->id) }}" method="POST" class="mt-4">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 rounded-lg shadow">
+                            Delete
+                        </button>
+                    </form>
+                </div>
+
 
                         <script>
                             function confirmBillRefund(amount) {

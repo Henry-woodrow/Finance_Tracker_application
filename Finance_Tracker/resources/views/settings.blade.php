@@ -35,21 +35,7 @@
                     <a href="{{ route('password.edit') }}" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg text-center shadow">Change Password</a>
                 </div>
 
-                <div>
-                    <a href="#" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg text-center shadow">Change salary</a>
-                </div>
-
-                <div>
-                    <a href="#" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg text-center shadow">Change monthly</a>
-                </div>
-
-                <div>
-                    <a href="#" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg text-center shadow">Change weekly</a>
-                </div>
-
-                <div>
-                    <a href="#" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg text-center shadow">edit/delete gifts</a>
-                </div>
+            
 
 
                 
@@ -60,9 +46,13 @@
                     <button type="button" id="themeToggle" class="bg-gray-700 px-4 py-2 rounded-full text-sm hover:bg-blue-600 transition">Toggle Light/Dark</button>
                 </div>
 
-                <div>
-                    <a href="#" class="block w-full bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-lg text-center shadow">Reset</a>
-                </div>
+                <form action="{{ route('settings.reset') }}" method="POST" onsubmit="return confirm('Are you sure? This will delete all your data except your account.')">
+                    @csrf
+                    <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-lg text-center shadow">
+                        Reset
+                    </button>
+                </form>
+
             </div>
         </div>
     </div>
