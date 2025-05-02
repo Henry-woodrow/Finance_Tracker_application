@@ -40,11 +40,6 @@
 
                 
 
-                <!-- Theme Toggle -->
-                <div class="flex items-center justify-between">
-                    <span class="text-sm text-gray-300">Theme</span>
-                    <button type="button" id="themeToggle" class="bg-gray-700 px-4 py-2 rounded-full text-sm hover:bg-blue-600 transition">Toggle Light/Dark</button>
-                </div>
 
                 <form action="{{ route('settings.reset') }}" method="POST" onsubmit="return confirm('Are you sure? This will delete all your data except your account.')">
                     @csrf

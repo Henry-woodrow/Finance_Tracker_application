@@ -38,10 +38,7 @@
             </div>
 
             <div class="flex items-center justify-between mb-6">
-                <label class="inline-flex items-center">
-                    <input type="checkbox" name="remember" class="form-checkbox text-blue-600">
-                    <span class="ml-2 text-sm">Remember me</span>
-                </label>
+
                 @if (Route::has('password.request'))
                     <a href="{{ route('password.request') }}" class="text-sm text-blue-400 hover:underline">Forgot password?</a>
                 @endif
