@@ -8,14 +8,14 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::table('weeklies', function (Blueprint $table) {
+        Schema::table('weekly', function (Blueprint $table) {
             $table->decimal('weekly_total', 10, 2)->default(0);
         });
     }
     
     public function down()
     {
-        Schema::table('weeklies', function (Blueprint $table) {
+        Schema::table('weekly', function (Blueprint $table) {
             $table->dropColumn('weekly_total');
         });
     }
